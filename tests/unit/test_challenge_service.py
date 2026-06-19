@@ -67,6 +67,19 @@ def test_list_challenges_with_category_filter_returns_only_matching(db_session):
     assert results[0].name == "Web1"
 
 
+def test_get_challenge_with_stats_increments_solve_count_after_correct_submission(db_session):
+    from app.schemas import SubmissionCreate, TeamCreate
+    from app.services import create_team, get_challenge_with_stats, submit_flag
+
+    ch = create_challenge(db_session, ChallengeCreate(name="Countable", description="d", flag="CTF{c}", base_points=100))
+    team = create_team(db_session, TeamCreate(name="Solver"))
+    submit_flag(db_session, SubmissionCreate(team_id=team.id, challenge_id=ch.id, flag="CTF{c}"))
+
+    detail = get_challenge_with_stats(db_session, ch.id)
+
+    assert detail.solve_count == 1
+
+
 def test_get_challenge_by_id_preserves_all_fields(db_session):
     data = ChallengeCreate(
         name="Web 202",
