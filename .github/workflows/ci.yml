@@ -31,6 +31,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Show collected test count
+        run: pytest --collect-only -q 2>&1 | tail -1
+
       - name: Run tests with coverage
         run: |
           pytest --cov=app --cov-report=xml --cov-report=html --cov-report=term-missing
