@@ -21,6 +21,17 @@ def test_get_challenge_by_id_raises_for_nonexistent_id(db_session):
         get_challenge_by_id(db_session, 9999)
 
 
+def test_get_challenge_with_stats_returns_zero_solve_count_initially(db_session):
+    from app.services import get_challenge_with_stats
+
+    data = ChallengeCreate(name="Unsolved", description="Not yet solved", flag="CTF{u}", base_points=50)
+    created = create_challenge(db_session, data)
+
+    detail = get_challenge_with_stats(db_session, created.id)
+
+    assert detail.solve_count == 0
+
+
 def test_get_challenge_by_id_preserves_all_fields(db_session):
     data = ChallengeCreate(
         name="Web 202",
