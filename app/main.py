@@ -7,8 +7,8 @@ from app.routers import router
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="CTF Platform",
-    description="Motor de Validação de Flags e Pontuação para competições CTF",
+    title="FireUAI CTF Flags API",
+    description="Motor de Validação de Flags e Pontuação para competições de CTF (Capture The Flag)",
     version="1.0.0",
 )
 
