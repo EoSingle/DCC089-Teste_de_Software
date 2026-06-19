@@ -6,7 +6,7 @@ class ChallengeCreate(BaseModel):
     description: str = Field(..., min_length=1, max_length=1000)
     category: str = Field(default="misc", max_length=50)
     flag: str = Field(..., min_length=1)
-    base_points: int = Field(..., gt=0)
+    base_points: int = Field(..., gt=0, le=1000)
 
 
 class ChallengeResponse(BaseModel):
