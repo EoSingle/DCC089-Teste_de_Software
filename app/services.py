@@ -92,6 +92,8 @@ def get_team_by_id(db: Session, team_id: int) -> models.Team:
 
 
 def create_team(db: Session, data: schemas.TeamCreate) -> models.Team:
+    if db.query(models.Team).filter(models.Team.name == data.name).first():
+        raise ConflictError(f"A team named '{data.name}' already exists")
     team = models.Team(name=data.name)
     db.add(team)
     db.commit()

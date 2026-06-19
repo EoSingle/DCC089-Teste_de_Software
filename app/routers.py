@@ -53,6 +53,8 @@ def list_teams(db: Session = Depends(get_db)):
 def create_team(data: schemas.TeamCreate, db: Session = Depends(get_db)):
     try:
         return services.create_team(db, data)
+    except ConflictError as e:
+        raise HTTPException(status_code=409, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
