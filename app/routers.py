@@ -1,6 +1,7 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app import schemas, services
@@ -8,6 +9,15 @@ from app.database import get_db
 from app.exceptions import ConflictError
 
 router = APIRouter()
+
+
+@router.get("/health")
+def health_check(db: Session = Depends(get_db)):
+    try:
+        db.execute(text("SELECT 1"))
+        return {"status": "ok", "database": "connected"}
+    except Exception:
+        raise HTTPException(status_code=503, detail="Database unavailable")
 
 
 @router.post("/challenges", response_model=schemas.ChallengeResponse, status_code=201)
