@@ -34,3 +34,28 @@ def test_list_teams_returns_all_teams(db_session):
 
 def test_list_teams_returns_empty_list_when_no_teams_exist(db_session):
     assert list_teams(db_session) == []
+
+
+def test_scoreboard_total_solves_is_zero_for_team_with_no_solves(db_session):
+    from app.services import create_team, get_scoreboard
+    create_team(db_session, TeamCreate(name="No Solves"))
+
+    scoreboard = get_scoreboard(db_session)
+
+    assert scoreboard.entries[0].total_solves == 0
+
+
+def test_scoreboard_total_solves_reflects_correct_submissions(db_session):
+    from app.schemas import ChallengeCreate, SubmissionCreate
+    from app.services import create_challenge, create_team, get_scoreboard, submit_flag
+
+    team = create_team(db_session, TeamCreate(name="Solver"))
+    ch1 = create_challenge(db_session, ChallengeCreate(name="Ch1", description="d", flag="CTF{1}", base_points=100))
+    ch2 = create_challenge(db_session, ChallengeCreate(name="Ch2", description="d", flag="CTF{2}", base_points=100))
+
+    submit_flag(db_session, SubmissionCreate(team_id=team.id, challenge_id=ch1.id, flag="CTF{1}"))
+    submit_flag(db_session, SubmissionCreate(team_id=team.id, challenge_id=ch2.id, flag="CTF{2}"))
+
+    scoreboard = get_scoreboard(db_session)
+
+    assert scoreboard.entries[0].total_solves == 2
