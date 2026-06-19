@@ -28,6 +28,11 @@ def list_challenges(db: Session = Depends(get_db)):
     return services.list_challenges(db)
 
 
+@router.get("/teams", response_model=list[schemas.TeamResponse])
+def list_teams(db: Session = Depends(get_db)):
+    return services.list_teams(db)
+
+
 @router.post("/teams", response_model=schemas.TeamResponse, status_code=201)
 def create_team(data: schemas.TeamCreate, db: Session = Depends(get_db)):
     try:

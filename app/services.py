@@ -57,6 +57,10 @@ def list_challenges(db: Session) -> list[models.Challenge]:
     return db.query(models.Challenge).all()
 
 
+def list_teams(db: Session) -> list[models.Team]:
+    return db.query(models.Team).all()
+
+
 def create_team(db: Session, data: schemas.TeamCreate) -> models.Team:
     team = models.Team(name=data.name)
     db.add(team)
