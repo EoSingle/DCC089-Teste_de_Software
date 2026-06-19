@@ -50,6 +50,29 @@ def test_list_teams_returns_empty_list_when_no_teams_exist(db_session):
     assert list_teams(db_session) == []
 
 
+def test_scoreboard_ranks_higher_scoring_team_first(db_session):
+    from app.schemas import ChallengeCreate, SubmissionCreate
+    from app.services import create_challenge, get_scoreboard, submit_flag
+
+    ch = create_challenge(db_session, ChallengeCreate(name="Rank Ch", description="d", flag="CTF{r}", base_points=100))
+    low = create_team(db_session, TeamCreate(name="LowRank"))
+    high = create_team(db_session, TeamCreate(name="HighRank"))
+
+    submit_flag(db_session, SubmissionCreate(team_id=high.id, challenge_id=ch.id, flag="CTF{r}"))
+
+    entries = get_scoreboard(db_session).entries
+    assert entries[0].team_name == "HighRank"
+    assert entries[1].team_name == "LowRank"
+
+
+def test_scoreboard_returns_empty_entries_when_no_teams_exist(db_session):
+    from app.services import get_scoreboard
+
+    scoreboard = get_scoreboard(db_session)
+
+    assert scoreboard.entries == []
+
+
 def test_scoreboard_total_solves_is_zero_for_team_with_no_solves(db_session):
     from app.services import create_team, get_scoreboard
     create_team(db_session, TeamCreate(name="No Solves"))
