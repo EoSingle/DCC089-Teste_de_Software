@@ -152,6 +152,30 @@ def test_list_teams_returns_all_created_teams(client):
     assert "Beta" in names
 
 
+def test_team_solves_endpoint_returns_correct_solve_history(client):
+    challenge = _create_challenge(client, name="Rev 101", flag="CTF{rev}", points=100)
+    team = _create_team(client, name="Hackers")
+    _submit(client, team_id=team["id"], challenge_id=challenge["id"], flag="CTF{rev}")
+
+    resp = client.get(f"/api/v1/teams/{team['id']}/solves")
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["team_name"] == "Hackers"
+    assert len(body["solves"]) == 1
+    assert body["solves"][0]["challenge_name"] == "Rev 101"
+    assert body["solves"][0]["points_awarded"] > 0
+
+
+def test_team_solves_is_empty_before_any_submission(client):
+    team = _create_team(client, name="Fresh Team")
+
+    resp = client.get(f"/api/v1/teams/{team['id']}/solves")
+
+    assert resp.status_code == 200
+    assert resp.json()["solves"] == []
+
+
 def test_scoreboard_orders_teams_by_score_descending(client):
     challenge_a = _create_challenge(client, name="Pwn 1", flag="CTF{pwn1}", points=200)
     challenge_b = _create_challenge(client, name="Pwn 2", flag="CTF{pwn2}", points=100)
