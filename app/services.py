@@ -53,8 +53,11 @@ def get_challenge_by_id(db: Session, challenge_id: int) -> models.Challenge:
     return challenge
 
 
-def list_challenges(db: Session) -> list[models.Challenge]:
-    return db.query(models.Challenge).all()
+def list_challenges(db: Session, category: str | None = None) -> list[models.Challenge]:
+    query = db.query(models.Challenge)
+    if category:
+        query = query.filter(models.Challenge.category == category)
+    return query.all()
 
 
 def list_teams(db: Session) -> list[models.Team]:

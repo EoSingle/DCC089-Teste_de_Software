@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app import schemas, services
@@ -24,8 +26,11 @@ def get_challenge(challenge_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/challenges", response_model=list[schemas.ChallengeResponse])
-def list_challenges(db: Session = Depends(get_db)):
-    return services.list_challenges(db)
+def list_challenges(
+    category: Optional[str] = Query(default=None, description="Filter by category"),
+    db: Session = Depends(get_db),
+):
+    return services.list_challenges(db, category=category)
 
 
 @router.get("/teams/{team_id}", response_model=schemas.TeamResponse)
