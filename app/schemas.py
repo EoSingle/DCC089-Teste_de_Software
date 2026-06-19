@@ -68,6 +68,7 @@ class ScoreboardEntry(BaseModel):
     rank: int
     team_name: str
     score: int
+    total_solves: int
 
 
 class ScoreboardResponse(BaseModel):

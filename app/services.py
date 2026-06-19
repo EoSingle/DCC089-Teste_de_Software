@@ -169,8 +169,19 @@ def get_scoreboard(db: Session, limit: int = 50, offset: int = 0) -> schemas.Sco
         .limit(limit)
         .all()
     )
-    entries = [
-        schemas.ScoreboardEntry(rank=offset + i + 1, team_name=team.name, score=team.score)
-        for i, team in enumerate(teams)
-    ]
+    entries = []
+    for i, team in enumerate(teams):
+        total_solves = (
+            db.query(models.Submission)
+            .filter(models.Submission.team_id == team.id, models.Submission.is_correct == True)
+            .count()
+        )
+        entries.append(
+            schemas.ScoreboardEntry(
+                rank=offset + i + 1,
+                team_name=team.name,
+                score=team.score,
+                total_solves=total_solves,
+            )
+        )
     return schemas.ScoreboardResponse(entries=entries)
