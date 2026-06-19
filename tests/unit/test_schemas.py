@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from app.schemas import ChallengeCreate, SubmissionCreate, TeamCreate
+from app.schemas import ChallengeCreate, Difficulty, SubmissionCreate, TeamCreate
 
 
 # --- ChallengeCreate ---
@@ -38,6 +38,26 @@ def test_challenge_with_negative_base_points_is_rejected():
 def test_challenge_with_empty_flag_is_rejected():
     with pytest.raises(ValidationError):
         ChallengeCreate(name="Test", description="desc", flag="", base_points=100)
+
+
+def test_challenge_default_difficulty_is_medium():
+    data = ChallengeCreate(name="Test", description="desc", flag="CTF{x}", base_points=100)
+    assert data.difficulty == Difficulty.medium
+
+
+def test_challenge_accepts_easy_difficulty():
+    data = ChallengeCreate(name="Test", description="desc", flag="CTF{x}", base_points=100, difficulty="easy")
+    assert data.difficulty == Difficulty.easy
+
+
+def test_challenge_accepts_hard_difficulty():
+    data = ChallengeCreate(name="Test", description="desc", flag="CTF{x}", base_points=100, difficulty="hard")
+    assert data.difficulty == Difficulty.hard
+
+
+def test_challenge_with_invalid_difficulty_is_rejected():
+    with pytest.raises(ValidationError):
+        ChallengeCreate(name="Test", description="desc", flag="CTF{x}", base_points=100, difficulty="impossible")
 
 
 def test_challenge_default_category_is_misc():
