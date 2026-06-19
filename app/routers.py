@@ -86,5 +86,9 @@ def submit_flag(data: schemas.SubmissionCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/scoreboard", response_model=schemas.ScoreboardResponse)
-def get_scoreboard(db: Session = Depends(get_db)):
-    return services.get_scoreboard(db)
+def get_scoreboard(
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    db: Session = Depends(get_db),
+):
+    return services.get_scoreboard(db, limit=limit, offset=offset)

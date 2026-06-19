@@ -161,10 +161,16 @@ def get_team_solves(db: Session, team_id: int) -> schemas.TeamSolvesResponse:
     return schemas.TeamSolvesResponse(team_id=team.id, team_name=team.name, solves=solves)
 
 
-def get_scoreboard(db: Session) -> schemas.ScoreboardResponse:
-    teams = db.query(models.Team).order_by(models.Team.score.desc()).all()
+def get_scoreboard(db: Session, limit: int = 50, offset: int = 0) -> schemas.ScoreboardResponse:
+    teams = (
+        db.query(models.Team)
+        .order_by(models.Team.score.desc())
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
     entries = [
-        schemas.ScoreboardEntry(rank=i + 1, team_name=team.name, score=team.score)
+        schemas.ScoreboardEntry(rank=offset + i + 1, team_name=team.name, score=team.score)
         for i, team in enumerate(teams)
     ]
     return schemas.ScoreboardResponse(entries=entries)
