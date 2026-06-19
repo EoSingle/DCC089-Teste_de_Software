@@ -39,6 +39,13 @@ def _submit(client, *, team_id, challenge_id, flag):
 # ---------------------------------------------------------------------------
 
 
+def test_cors_headers_are_present_in_api_response(client):
+    resp = client.get("/api/v1/health", headers={"Origin": "http://example.com"})
+
+    assert resp.status_code == 200
+    assert "access-control-allow-origin" in resp.headers
+
+
 def test_health_endpoint_returns_ok_with_connected_database(client):
     resp = client.get("/api/v1/health")
 
