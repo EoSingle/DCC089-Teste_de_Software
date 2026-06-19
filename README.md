@@ -26,7 +26,24 @@ Para o desenvolvimento e validação da aplicação, adotamos as seguintes ferra
 * **Ferramenta de Cobertura:** `pytest-cov`.
 * **Controle de Versão:** Git e GitHub.
 
-## 4. Como Executar os Testes Localmente
+## 4. Endpoints da API
+
+Todos os endpoints estão sob o prefixo `/api/v1`.
+
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| `GET` | `/health` | Verifica o status da API e a conectividade com o banco |
+| `POST` | `/challenges` | Cria um novo desafio |
+| `GET` | `/challenges` | Lista todos os desafios (suporta `?category=`) |
+| `GET` | `/challenges/:id` | Retorna um desafio com contagem de solves |
+| `POST` | `/teams` | Cria uma nova equipe |
+| `GET` | `/teams` | Lista todas as equipes |
+| `GET` | `/teams/:id` | Retorna uma equipe pelo ID |
+| `GET` | `/teams/:id/solves` | Histórico de flags resolvidas pela equipe |
+| `POST` | `/submissions` | Submete uma flag para validação |
+| `GET` | `/scoreboard` | Placar geral (suporta `?limit=` e `?offset=`) |
+
+## 5. Como Executar os Testes Localmente
 
 **Pré-requisito:** Python 3.11+
 
