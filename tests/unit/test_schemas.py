@@ -78,6 +78,16 @@ def test_submission_with_empty_flag_is_rejected():
         SubmissionCreate(team_id=1, challenge_id=1, flag="")
 
 
+def test_challenge_with_base_points_above_maximum_is_rejected():
+    with pytest.raises(ValidationError):
+        ChallengeCreate(name="Test", description="desc", flag="CTF{x}", base_points=1001)
+
+
+def test_challenge_with_base_points_at_maximum_is_accepted():
+    data = ChallengeCreate(name="Test", description="desc", flag="CTF{x}", base_points=1000)
+    assert data.base_points == 1000
+
+
 def test_submission_with_non_positive_team_id_is_rejected():
     with pytest.raises(ValidationError):
         SubmissionCreate(team_id=0, challenge_id=1, flag="CTF{x}")
