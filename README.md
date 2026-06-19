@@ -1,5 +1,8 @@
 # Trabalho Prático - Teste de Software
 
+[![CI](https://github.com/EoSingle/DCC089-Teste_de_Software/actions/workflows/ci.yml/badge.svg)](https://github.com/EoSingle/DCC089-Teste_de_Software/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/EoSingle/DCC089-Teste_de_Software/branch/main/graph/badge.svg)](https://codecov.io/gh/EoSingle/DCC089-Teste_de_Software)
+
 Repositório criado para o Trabalho Prático da disciplina de Teste de Software. O objetivo deste projeto é desenvolver um sistema simples para evidenciar como a implementação de testes automatizados auxilia na manutenção, refatoração e evolução de um sistema de software.
 
 ## 1. Membros do Grupo
