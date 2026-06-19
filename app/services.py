@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app import models, schemas
+from app.exceptions import ConflictError
 from app.flag_utils import hash_flag, validate_flag
 from app.scoring import FIRST_BLOOD_BONUS, calculate_points, is_first_blood
 
@@ -33,6 +34,8 @@ def _has_team_solved(db: Session, team_id: int, challenge_id: int) -> bool:
 
 
 def create_challenge(db: Session, data: schemas.ChallengeCreate) -> models.Challenge:
+    if db.query(models.Challenge).filter(models.Challenge.name == data.name).first():
+        raise ConflictError(f"A challenge named '{data.name}' already exists")
     challenge = models.Challenge(
         name=data.name,
         description=data.description,

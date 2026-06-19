@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app import schemas, services
 from app.database import get_db
+from app.exceptions import ConflictError
 
 router = APIRouter()
 
@@ -13,6 +14,8 @@ router = APIRouter()
 def create_challenge(data: schemas.ChallengeCreate, db: Session = Depends(get_db)):
     try:
         return services.create_challenge(db, data)
+    except ConflictError as e:
+        raise HTTPException(status_code=409, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
