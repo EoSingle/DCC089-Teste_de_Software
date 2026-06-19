@@ -43,6 +43,15 @@ class SubmissionResult(BaseModel):
     message: str
 
 
+class ChallengeDetailResponse(BaseModel):
+    id: int
+    name: str
+    description: str
+    category: str
+    base_points: int
+    solve_count: int
+
+
 class SolveEntry(BaseModel):
     challenge_id: int
     challenge_name: str

@@ -53,6 +53,23 @@ def get_challenge_by_id(db: Session, challenge_id: int) -> models.Challenge:
     return challenge
 
 
+def get_challenge_with_stats(db: Session, challenge_id: int) -> schemas.ChallengeDetailResponse:
+    challenge = get_challenge_by_id(db, challenge_id)
+    solve_count = (
+        db.query(models.Submission)
+        .filter(models.Submission.challenge_id == challenge_id, models.Submission.is_correct == True)
+        .count()
+    )
+    return schemas.ChallengeDetailResponse(
+        id=challenge.id,
+        name=challenge.name,
+        description=challenge.description,
+        category=challenge.category,
+        base_points=challenge.base_points,
+        solve_count=solve_count,
+    )
+
+
 def list_challenges(db: Session, category: str | None = None) -> list[models.Challenge]:
     query = db.query(models.Challenge)
     if category:

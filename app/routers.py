@@ -17,10 +17,10 @@ def create_challenge(data: schemas.ChallengeCreate, db: Session = Depends(get_db
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.get("/challenges/{challenge_id}", response_model=schemas.ChallengeResponse)
+@router.get("/challenges/{challenge_id}", response_model=schemas.ChallengeDetailResponse)
 def get_challenge(challenge_id: int, db: Session = Depends(get_db)):
     try:
-        return services.get_challenge_by_id(db, challenge_id)
+        return services.get_challenge_with_stats(db, challenge_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
