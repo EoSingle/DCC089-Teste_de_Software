@@ -22,3 +22,29 @@ Para o desenvolvimento e validação da aplicação, adotamos as seguintes ferra
 * **Framework de Testes:** PyTest.
 * **Ferramenta de Cobertura:** `pytest-cov`.
 * **Controle de Versão:** Git e GitHub.
+
+## 4. Como Executar os Testes Localmente
+
+**Pré-requisito:** Python 3.11+
+
+```bash
+# 1. Clone o repositório e entre na pasta
+git clone <url-do-repositorio>
+cd <nome-do-repositorio>
+
+# 2. Crie e ative um ambiente virtual
+python -m venv .venv
+source .venv/bin/activate        # Linux/macOS
+.venv\Scripts\activate           # Windows
+
+# 3. Instale as dependências
+pip install -r requirements.txt
+
+# 4. Execute todos os testes
+pytest
+
+# 5. Execute com relatório de cobertura
+pytest --cov=app --cov-report=term-missing
+```
+
+Os testes utilizam SQLite em memória — nenhum serviço externo (MariaDB, Redis) é necessário para rodá-los.
