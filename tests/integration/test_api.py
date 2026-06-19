@@ -121,6 +121,22 @@ def test_duplicate_submission_by_same_team_awards_zero_points(client):
 # ---------------------------------------------------------------------------
 
 
+def test_category_filter_returns_only_matching_challenges(client):
+    _create_challenge(client, name="Web 101", flag="CTF{w1}")
+    client.post(
+        "/api/v1/challenges",
+        json={"name": "Pwn 101", "description": "desc", "category": "pwn", "flag": "CTF{p1}", "base_points": 100},
+    )
+
+    resp = client.get("/api/v1/challenges?category=web")
+
+    assert resp.status_code == 200
+    results = resp.json()
+    assert all(c["category"] == "web" for c in results)
+    assert any(c["name"] == "Web 101" for c in results)
+    assert not any(c["name"] == "Pwn 101" for c in results)
+
+
 def test_list_teams_returns_all_created_teams(client):
     _create_team(client, name="Alpha")
     _create_team(client, name="Beta")
