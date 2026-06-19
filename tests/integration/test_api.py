@@ -39,6 +39,15 @@ def _submit(client, *, team_id, challenge_id, flag):
 # ---------------------------------------------------------------------------
 
 
+def test_health_endpoint_returns_ok_with_connected_database(client):
+    resp = client.get("/api/v1/health")
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["status"] == "ok"
+    assert body["database"] == "connected"
+
+
 def test_create_challenge_returns_persisted_resource(client):
     resp = client.post(
         "/api/v1/challenges",
