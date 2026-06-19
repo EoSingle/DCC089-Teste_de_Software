@@ -46,6 +46,13 @@ def create_challenge(db: Session, data: schemas.ChallengeCreate) -> models.Chall
     return challenge
 
 
+def get_challenge_by_id(db: Session, challenge_id: int) -> models.Challenge:
+    challenge = db.query(models.Challenge).filter(models.Challenge.id == challenge_id).first()
+    if not challenge:
+        raise ValueError(f"Challenge {challenge_id} not found")
+    return challenge
+
+
 def list_challenges(db: Session) -> list[models.Challenge]:
     return db.query(models.Challenge).all()
 

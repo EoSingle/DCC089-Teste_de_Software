@@ -15,6 +15,14 @@ def create_challenge(data: schemas.ChallengeCreate, db: Session = Depends(get_db
         raise HTTPException(status_code=400, detail=str(e))
 
 
+@router.get("/challenges/{challenge_id}", response_model=schemas.ChallengeResponse)
+def get_challenge(challenge_id: int, db: Session = Depends(get_db)):
+    try:
+        return services.get_challenge_by_id(db, challenge_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
 @router.get("/challenges", response_model=list[schemas.ChallengeResponse])
 def list_challenges(db: Session = Depends(get_db)):
     return services.list_challenges(db)
