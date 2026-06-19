@@ -2,6 +2,7 @@
 
 import pytest
 
+from app.exceptions import ConflictError
 from app.schemas import TeamCreate
 from app.services import create_team, get_team_by_id, list_teams
 
@@ -30,6 +31,19 @@ def test_list_teams_returns_all_teams(db_session):
     assert len(teams) == 2
     names = {t.name for t in teams}
     assert names == {"Alpha", "Beta"}
+
+
+def test_create_team_initializes_score_to_zero(db_session):
+    team = create_team(db_session, TeamCreate(name="Zero Score"))
+
+    assert team.score == 0
+
+
+def test_create_team_raises_conflict_for_duplicate_name(db_session):
+    create_team(db_session, TeamCreate(name="Taken"))
+
+    with pytest.raises(ConflictError):
+        create_team(db_session, TeamCreate(name="Taken"))
 
 
 def test_list_teams_returns_empty_list_when_no_teams_exist(db_session):
