@@ -121,6 +121,18 @@ def test_duplicate_submission_by_same_team_awards_zero_points(client):
 # ---------------------------------------------------------------------------
 
 
+def test_duplicate_challenge_name_returns_409(client):
+    _create_challenge(client, name="Unique Challenge", flag="CTF{u1}")
+
+    resp = client.post(
+        "/api/v1/challenges",
+        json={"name": "Unique Challenge", "description": "desc", "flag": "CTF{u2}", "base_points": 50},
+    )
+
+    assert resp.status_code == 409
+    assert "already exists" in resp.json()["detail"]
+
+
 def test_category_filter_returns_only_matching_challenges(client):
     client.post(
         "/api/v1/challenges",
