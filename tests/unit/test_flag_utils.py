@@ -62,3 +62,28 @@ def test_flag_with_leading_whitespace_fails_validation():
 def test_flag_with_trailing_whitespace_fails_validation():
     stored = hash_flag("CTF{exact}")
     assert validate_flag("CTF{exact} ", stored) is False
+
+
+@pytest.mark.parametrize("flag", [
+    "CTF{simple}",
+    "CTF{with spaces inside}",
+    "CTF{with_underscores_and-dashes}",
+    "CTF{UPPERCASE}",
+    "CTF{1234567890}",
+    "CTF{special!@#$%^&*()}",
+])
+def test_flag_round_trip_hash_and_validate(flag):
+    stored = hash_flag(flag)
+    assert validate_flag(flag, stored) is True
+
+
+@pytest.mark.parametrize("wrong_flag", [
+    "",
+    " ",
+    "CTF{}",
+    "no_prefix_here",
+    "ctf{lowercase_prefix}",
+])
+def test_different_flag_always_fails_validation(wrong_flag):
+    stored = hash_flag("CTF{correct}")
+    assert validate_flag(wrong_flag, stored) is False
