@@ -1,4 +1,12 @@
+from enum import Enum
+
 from pydantic import BaseModel, Field
+
+
+class Difficulty(str, Enum):
+    easy = "easy"
+    medium = "medium"
+    hard = "hard"
 
 
 class ChallengeCreate(BaseModel):
@@ -7,6 +15,7 @@ class ChallengeCreate(BaseModel):
     category: str = Field(default="misc", max_length=50)
     flag: str = Field(..., min_length=1)
     base_points: int = Field(..., gt=0, le=1000)
+    difficulty: Difficulty = Difficulty.medium
 
 
 class ChallengeResponse(BaseModel):
@@ -15,6 +24,7 @@ class ChallengeResponse(BaseModel):
     description: str
     category: str
     base_points: int
+    difficulty: str
 
     model_config = {"from_attributes": True}
 
@@ -49,6 +59,7 @@ class ChallengeDetailResponse(BaseModel):
     description: str
     category: str
     base_points: int
+    difficulty: str
     solve_count: int
 
 

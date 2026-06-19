@@ -15,6 +15,7 @@ class Challenge(Base):
     category: Mapped[str] = mapped_column(String(50), nullable=False)
     flag_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     base_points: Mapped[int] = mapped_column(Integer, nullable=False)
+    difficulty: Mapped[str] = mapped_column(String(10), nullable=False, default="medium")
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     submissions: Mapped[list["Submission"]] = relationship("Submission", back_populates="challenge")

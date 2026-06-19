@@ -42,6 +42,7 @@ def create_challenge(db: Session, data: schemas.ChallengeCreate) -> models.Chall
         category=data.category,
         flag_hash=hash_flag(data.flag),
         base_points=data.base_points,
+        difficulty=data.difficulty.value,
     )
     db.add(challenge)
     db.commit()
@@ -69,6 +70,7 @@ def get_challenge_with_stats(db: Session, challenge_id: int) -> schemas.Challeng
         description=challenge.description,
         category=challenge.category,
         base_points=challenge.base_points,
+        difficulty=challenge.difficulty,
         solve_count=solve_count,
     )
 
