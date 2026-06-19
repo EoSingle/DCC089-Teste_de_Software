@@ -121,6 +121,15 @@ def test_duplicate_submission_by_same_team_awards_zero_points(client):
 # ---------------------------------------------------------------------------
 
 
+def test_submission_with_nonexistent_challenge_returns_404(client):
+    team = _create_team(client)
+
+    resp = _submit(client, team_id=team["id"], challenge_id=9999, flag="CTF{x}")
+
+    assert resp.status_code == 404
+    assert "not found" in resp.json()["detail"].lower()
+
+
 def test_submission_with_nonexistent_team_returns_404(client):
     challenge = _create_challenge(client, flag="CTF{x}")
 
