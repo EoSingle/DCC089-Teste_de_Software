@@ -26,7 +26,27 @@ Para o desenvolvimento e validação da aplicação, adotamos as seguintes ferra
 * **Ferramenta de Cobertura:** `pytest-cov`.
 * **Controle de Versão:** Git e GitHub.
 
-## 4. Endpoints da API
+## 4. Arquitetura do Sistema
+
+O projeto segue uma arquitetura em camadas, separando responsabilidades para facilitar os testes:
+
+```
+app/
+├── main.py          # Ponto de entrada: cria a aplicação FastAPI e registra middlewares
+├── config.py        # Configurações via variáveis de ambiente (DATABASE_URL)
+├── database.py      # Engine e sessão SQLAlchemy; dependência get_db para injeção
+├── models.py        # Modelos ORM: Challenge, Team, Submission
+├── schemas.py       # Schemas Pydantic para validação de entrada e saída
+├── flag_utils.py    # Funções puras: hash_flag (SHA-256) e validate_flag
+├── scoring.py       # Funções puras: calculate_points (decay) e is_first_blood
+├── services.py      # Lógica de negócio com acesso ao banco de dados
+├── routers.py       # Endpoints FastAPI; traduz HTTP ↔ chamadas de serviço
+└── exceptions.py    # Exceções de domínio (ConflictError)
+```
+
+As **funções puras** (`flag_utils`, `scoring`) são testadas sem dependências. Os **serviços** são testados com SQLite em memória. Os **endpoints** são testados via `TestClient` do FastAPI.
+
+## 5. Endpoints da API
 
 Todos os endpoints estão sob o prefixo `/api/v1`.
 
