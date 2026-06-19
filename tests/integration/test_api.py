@@ -121,6 +121,18 @@ def test_duplicate_submission_by_same_team_awards_zero_points(client):
 # ---------------------------------------------------------------------------
 
 
+def test_list_teams_returns_all_created_teams(client):
+    _create_team(client, name="Alpha")
+    _create_team(client, name="Beta")
+
+    resp = client.get("/api/v1/teams")
+
+    assert resp.status_code == 200
+    names = [t["name"] for t in resp.json()]
+    assert "Alpha" in names
+    assert "Beta" in names
+
+
 def test_scoreboard_orders_teams_by_score_descending(client):
     challenge_a = _create_challenge(client, name="Pwn 1", flag="CTF{pwn1}", points=200)
     challenge_b = _create_challenge(client, name="Pwn 2", flag="CTF{pwn2}", points=100)
