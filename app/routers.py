@@ -28,6 +28,14 @@ def list_challenges(db: Session = Depends(get_db)):
     return services.list_challenges(db)
 
 
+@router.get("/teams/{team_id}", response_model=schemas.TeamResponse)
+def get_team(team_id: int, db: Session = Depends(get_db)):
+    try:
+        return services.get_team_by_id(db, team_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
 @router.get("/teams", response_model=list[schemas.TeamResponse])
 def list_teams(db: Session = Depends(get_db)):
     return services.list_teams(db)

@@ -61,6 +61,13 @@ def list_teams(db: Session) -> list[models.Team]:
     return db.query(models.Team).all()
 
 
+def get_team_by_id(db: Session, team_id: int) -> models.Team:
+    team = db.query(models.Team).filter(models.Team.id == team_id).first()
+    if not team:
+        raise ValueError(f"Team {team_id} not found")
+    return team
+
+
 def create_team(db: Session, data: schemas.TeamCreate) -> models.Team:
     team = models.Team(name=data.name)
     db.add(team)
