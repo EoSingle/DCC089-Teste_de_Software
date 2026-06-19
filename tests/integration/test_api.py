@@ -122,7 +122,10 @@ def test_duplicate_submission_by_same_team_awards_zero_points(client):
 
 
 def test_category_filter_returns_only_matching_challenges(client):
-    _create_challenge(client, name="Web 101", flag="CTF{w1}")
+    client.post(
+        "/api/v1/challenges",
+        json={"name": "Web 101", "description": "desc", "category": "web", "flag": "CTF{w1}", "base_points": 100},
+    )
     client.post(
         "/api/v1/challenges",
         json={"name": "Pwn 101", "description": "desc", "category": "pwn", "flag": "CTF{p1}", "base_points": 100},
