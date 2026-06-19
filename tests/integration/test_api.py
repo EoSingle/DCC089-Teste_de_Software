@@ -224,6 +224,27 @@ def test_team_solves_is_empty_before_any_submission(client):
     assert resp.json()["solves"] == []
 
 
+def test_scoreboard_pagination_limits_number_of_entries(client):
+    for i in range(5):
+        _create_team(client, name=f"Team {i}")
+
+    resp = client.get("/api/v1/scoreboard?limit=2&offset=0")
+
+    assert resp.status_code == 200
+    assert len(resp.json()["entries"]) == 2
+
+
+def test_scoreboard_pagination_offset_adjusts_rank(client):
+    _create_team(client, name="Team A")
+    _create_team(client, name="Team B")
+    _create_team(client, name="Team C")
+
+    resp = client.get("/api/v1/scoreboard?limit=2&offset=1")
+
+    entries = resp.json()["entries"]
+    assert entries[0]["rank"] == 2
+
+
 def test_scoreboard_orders_teams_by_score_descending(client):
     challenge_a = _create_challenge(client, name="Pwn 1", flag="CTF{pwn1}", points=200)
     challenge_b = _create_challenge(client, name="Pwn 2", flag="CTF{pwn2}", points=100)
