@@ -43,6 +43,18 @@ class SubmissionResult(BaseModel):
     message: str
 
 
+class SolveEntry(BaseModel):
+    challenge_id: int
+    challenge_name: str
+    points_awarded: int
+
+
+class TeamSolvesResponse(BaseModel):
+    team_id: int
+    team_name: str
+    solves: list[SolveEntry]
+
+
 class ScoreboardEntry(BaseModel):
     rank: int
     team_name: str

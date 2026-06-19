@@ -121,6 +121,24 @@ def submit_flag(db: Session, data: schemas.SubmissionCreate) -> schemas.Submissi
     return schemas.SubmissionResult(correct=is_correct, points_awarded=points, message=message)
 
 
+def get_team_solves(db: Session, team_id: int) -> schemas.TeamSolvesResponse:
+    team = get_team_by_id(db, team_id)
+    submissions = (
+        db.query(models.Submission)
+        .filter(models.Submission.team_id == team_id, models.Submission.is_correct == True)
+        .all()
+    )
+    solves = [
+        schemas.SolveEntry(
+            challenge_id=s.challenge_id,
+            challenge_name=s.challenge.name,
+            points_awarded=s.points_awarded,
+        )
+        for s in submissions
+    ]
+    return schemas.TeamSolvesResponse(team_id=team.id, team_name=team.name, solves=solves)
+
+
 def get_scoreboard(db: Session) -> schemas.ScoreboardResponse:
     teams = db.query(models.Team).order_by(models.Team.score.desc()).all()
     entries = [

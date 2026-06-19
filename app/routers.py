@@ -54,6 +54,14 @@ def create_team(data: schemas.TeamCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=str(e))
 
 
+@router.get("/teams/{team_id}/solves", response_model=schemas.TeamSolvesResponse)
+def get_team_solves(team_id: int, db: Session = Depends(get_db)):
+    try:
+        return services.get_team_solves(db, team_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
 @router.post("/submissions", response_model=schemas.SubmissionResult)
 def submit_flag(data: schemas.SubmissionCreate, db: Session = Depends(get_db)):
     try:
