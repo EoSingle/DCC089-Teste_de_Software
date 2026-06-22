@@ -273,3 +273,100 @@ def test_scoreboard_orders_teams_by_score_descending(client):
     assert entries[0]["score"] > entries[1]["score"]
     assert entries[0]["rank"] == 1
     assert entries[1]["rank"] == 2
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/challenges/{id} — previously had no integration coverage at all
+# ---------------------------------------------------------------------------
+
+
+def test_get_challenge_detail_returns_full_challenge_with_solve_count(client):
+    challenge = _create_challenge(client, name="Forensics 101", flag="CTF{forensics}", points=150)
+    team = _create_team(client, name="Investigators")
+    _submit(client, team_id=team["id"], challenge_id=challenge["id"], flag="CTF{forensics}")
+
+    resp = client.get(f"/api/v1/challenges/{challenge['id']}")
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["id"] == challenge["id"]
+    assert body["name"] == "Forensics 101"
+    assert body["base_points"] == 150
+    assert body["solve_count"] == 1
+    # Flag must NOT be exposed by the detail endpoint either
+    assert "flag" not in body
+
+
+def test_get_challenge_detail_solve_count_is_zero_before_any_submission(client):
+    challenge = _create_challenge(client, name="Unsolved Detail", flag="CTF{unsolved}")
+
+    resp = client.get(f"/api/v1/challenges/{challenge['id']}")
+
+    assert resp.status_code == 200
+    assert resp.json()["solve_count"] == 0
+
+
+def test_get_nonexistent_challenge_returns_404(client):
+    resp = client.get("/api/v1/challenges/9999")
+
+    assert resp.status_code == 404
+    assert "not found" in resp.json()["detail"].lower()
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/teams/{id} — previously had no integration coverage at all
+# ---------------------------------------------------------------------------
+
+
+def test_get_team_detail_returns_team_data(client):
+    team = _create_team(client, name="Detail Team")
+
+    resp = client.get(f"/api/v1/teams/{team['id']}")
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["id"] == team["id"]
+    assert body["name"] == "Detail Team"
+    assert body["score"] == 0
+
+
+def test_get_team_detail_reflects_score_after_a_correct_submission(client):
+    challenge = _create_challenge(client, name="Score Detail", flag="CTF{score_detail}", points=100)
+    team = _create_team(client, name="Scorer")
+    _submit(client, team_id=team["id"], challenge_id=challenge["id"], flag="CTF{score_detail}")
+
+    resp = client.get(f"/api/v1/teams/{team['id']}")
+
+    assert resp.status_code == 200
+    assert resp.json()["score"] > 0
+
+
+def test_get_nonexistent_team_returns_404(client):
+    resp = client.get("/api/v1/teams/9999")
+
+    assert resp.status_code == 404
+    assert "not found" in resp.json()["detail"].lower()
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/teams/{id}/solves — 404 path was not covered
+# ---------------------------------------------------------------------------
+
+
+def test_team_solves_for_nonexistent_team_returns_404(client):
+    resp = client.get("/api/v1/teams/9999/solves")
+
+    assert resp.status_code == 404
+    assert "not found" in resp.json()["detail"].lower()
+
+
+# ---------------------------------------------------------------------------
+# Root-level health check exposed directly by app.main (no /api/v1 prefix)
+# ---------------------------------------------------------------------------
+
+
+def test_root_health_endpoint_returns_ok_status(client):
+    resp = client.get("/health")
+
+    assert resp.status_code == 200
+    assert resp.json() == {"status": "ok"}
